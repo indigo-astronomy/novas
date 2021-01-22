@@ -18,7 +18,7 @@
 #define N_STARS 3
 #define N_TIMES 4
 
-int main (void)
+int main(int argc, char *argv[])
 {
 /*
    Main function to check out many parts of NOVAS-C by calling
@@ -63,8 +63,13 @@ int main (void)
 /*
    Open the JPL ephemeris file.
 */
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: %s EPH-file", argv[0]);
+        exit (1);
+    }
 
-   if ((error = ephem_open ("JPLEPH", &jd_beg,&jd_end,&de_num)) != 0)
+   if ((error = ephem_open (argv[1], &jd_beg,&jd_end,&de_num)) != 0)
    {
       printf ("Error %d from ephem_open\n", error);
       return (error);
