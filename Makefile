@@ -1,10 +1,12 @@
 CC=gcc
-CFLAGS=-Wall
+CPATH=src
+LIBPATH=$(CPATH)/lib
+CFLAGS=-Wall -I$(LIBPATH)
 LDFLAGS=-lm -s
-SOLSYSOBJS=src/solsys1.o
-#SOLSYSOBJS=src/solsys2.o #! used src/jplint.f
-#SOLSYSOBJS=src/solsys3.o
-LIBOBJS=src/novas.o src/novascon.o src/nutation.o src/eph_manager.o src/readeph0.o $(SOLSYSOBJS)
+SOLSYSOBJS=$(LIBPATH)/solsys1.o
+#SOLSYSOBJS=$(LIBPATH)/solsys2.o #! used $(LIBPATH)/jplint.f
+#SOLSYSOBJS=$(LIBPATH)/solsys3.o
+LIBOBJS=$(LIBPATH)/novas.o $(LIBPATH)/novascon.o $(LIBPATH)/nutation.o $(LIBPATH)/eph_manager.o $(LIBPATH)/readeph0.o $(SOLSYSOBJS)
 LIBNAMES=libnovas.a libnovas.so.0
 PROGNAMES=example checkout-mp checkout-stars checkout-stars-full cio_file
 
@@ -20,19 +22,19 @@ libnovas.a: $(LIBOBJS)
 libnovas.so.0: $(LIBOBJS)
 	$(CC) $(CFLAGS) -shared $^ -o $@ $(LDFLAGS)
 
-example: src/example.c libnovas.a
+example: $(CPATH)/example.c libnovas.a
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-checkout-mp: src/checkout-mp.c libnovas.a
+checkout-mp: $(CPATH)/checkout-mp.c libnovas.a
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-checkout-stars: src/checkout-stars.c libnovas.a
+checkout-stars: $(CPATH)/checkout-stars.c libnovas.a
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-checkout-stars-full: src/checkout-stars-full.c libnovas.a
+checkout-stars-full: $(CPATH)/checkout-stars-full.c libnovas.a
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-cio_file: src/cio_file.c
+cio_file: $(CPATH)/cio_file.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
