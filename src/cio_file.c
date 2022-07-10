@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main (void)
+int main(int argc, char *argv[])
 {
 
 /*
@@ -38,6 +38,11 @@ int main (void)
 
    FILE *in_file, *out_file;
 
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: %s CIO-file output-BIN-file", argv[0]);
+        exit (1);
+    }
 
    double_size = sizeof (double);
    long_size = sizeof (long int);
@@ -48,7 +53,7 @@ int main (void)
    Open the input formatted text file.
 */
 
-   if ((in_file = fopen ("CIO_RA.TXT", "r")) == NULL)
+   if ((in_file = fopen (argv[1], "r")) == NULL)
    {
       printf ("Error opening input file.\n");
       return (1);
@@ -58,7 +63,7 @@ int main (void)
    Open the output binary, random-access file.
 */
 
-   if ((out_file = fopen ("cio_ra.bin", "wb+")) == NULL)
+   if ((out_file = fopen (argv[2], "wb+")) == NULL)
    {
       printf ("Error opening output file.\n");
       if (in_file)
@@ -174,7 +179,7 @@ int main (void)
    printf ("   Data interval: %f days\n\n", t_int);
    printf ("First data point: %f  %f\n", jd_1, ra_1);
    printf ("Last data point:  %f  %f\n\n", jd_n, ra_n);
-   printf ("Binary file cio_ra.bin created.\n");
+   printf ("Binary file %s created.\n", argv[2]);
 
 /*
    Close files.

@@ -17,7 +17,7 @@
 #include "novas.h"
 
 
-int main (void)
+int main(int argc, char *argv[])
 {
 
 /*
@@ -66,6 +66,12 @@ int main (void)
    object moon, mars;
    
    sky_pos t_place;
+
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: %s EPH-file", argv[0]);
+        exit (1);
+    }
    
 /*
    Make structures of type 'on_surface' and 'observer-on-surface' containing 
@@ -109,7 +115,7 @@ int main (void)
    Remove this block for use with solsys version 2.
 */
 
-   if ((error = ephem_open ("JPLEPH", &jd_beg,&jd_end,&de_num)) != 0)
+   if ((error = ephem_open (argv[1], &jd_beg,&jd_end,&de_num)) != 0)
    {
       if (error == 1)
          printf ("JPL ephemeris file not found.\n");
