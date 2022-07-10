@@ -18,6 +18,9 @@ LIBNAMESHARED=libnovas.so.$(SOVER)
 endif
 LIBNAMES=$(LIBNAMESTATIC) $(LIBNAMESHARED)
 PROGNAMES=example checkout-mp checkout-stars checkout-stars-full cio_file
+ifneq ($(shell uname -m), i386)
+    CFLAGS += -fPIC
+endif
 
 all: lib progs
 
