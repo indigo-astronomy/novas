@@ -94,9 +94,9 @@ double *readeph (int mp, char *name, double jd,
    formal parameter" compiler warnings.
 */
 
-   mp;
-   name;
-   jd;
+   mp = mp;
+   name = name;
+   jd = jd;
 
    pv = (double *) malloc (6L * sizeof (double));
 
