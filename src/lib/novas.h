@@ -483,7 +483,7 @@
 
    short int transform_cat (short int option, double date_incat,
                             cat_entry *incat, double date_newcat,
-                            char newcat_id[SIZE_OF_CAT_NAME],
+                            char *newcat_id,
 
                             cat_entry *newcat);
 
@@ -504,8 +504,8 @@
 
    double norm_ang (double angle);
 
-   short int make_cat_entry (char star_name[SIZE_OF_OBJ_NAME],
-                             char catalog[SIZE_OF_CAT_NAME],
+   short int make_cat_entry (char *star_name,
+                             char *catalog,
                         long int star_num, double ra, double dec,
                         double pm_ra, double pm_dec, double parallax,
                         double rad_vel,
@@ -513,7 +513,7 @@
                         cat_entry *star);
 
    short int make_object (short int type, short int number,
-                          char name[SIZE_OF_OBJ_NAME],
+                          char *name,
                           cat_entry *star_data,
 
                           object *cel_obj);
