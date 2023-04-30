@@ -1,3 +1,5 @@
+FORTRAN=gfortran
+FPATH=fortran
 CC=gcc
 CPATH=src
 LIBPATH=$(CPATH)/lib
@@ -18,6 +20,8 @@ LIBNAMESHARED=libnovas.so.$(SOVER)
 endif
 LIBNAMES=$(LIBNAMESTATIC) $(LIBNAMESHARED)
 PROGNAMES=example checkout-mp checkout-stars checkout-stars-full cio_file
+FPROGNAMES=asc2eph.e testeph1.e
+
 ifneq ($(shell uname -m), i386)
     CFLAGS += -fPIC
 endif
@@ -27,6 +31,8 @@ all: lib progs
 lib: $(LIBNAMES)
 
 progs: $(PROGNAMES)
+
+fortran: $(FPROGNAMES)
 
 $(LIBNAMESTATIC): $(LIBOBJS)
 	ar rcs $@ $^
@@ -49,5 +55,18 @@ checkout-stars-full: $(CPATH)/checkout-stars-full.c $(LIBNAMESTATIC)
 cio_file: $(CPATH)/cio_file.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
+asc2eph.e: $(FPATH)/asc2eph.f
+	$(FORTRAN) $^ -o $@
+
+# testeph1.e (below) is newer and smarter, so `testeph.e` is disabled.
+# Uncomment testeph.e above if you want it and run `make testeph.e`, but it
+# requires additional manual configuration.  See fortran/userguide.txt and
+# fortran/example-configurations/*
+#testeph.e: $(FPATH)/testeph.f
+#	$(FORTRAN) $^ -o $@
+
+testeph1.e: $(FPATH)/testeph1.f
+	$(FORTRAN) $^ -o $@
+
 clean:
-	rm -f $(LIBNAMES) $(PROGNAMES) $(LIBOBJS)
+	rm -f $(LIBNAMES) $(PROGNAMES) $(FPROGNAMES) $(LIBOBJS)

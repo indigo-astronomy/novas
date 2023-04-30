@@ -1,0 +1,49 @@
+diff --git a/fortran/testeph.f b/fortran/testeph.f
+index b58a1f1..1f08c00 100644
+--- a/fortran/testeph.f
++++ b/fortran/testeph.f
+@@ -248,7 +248,7 @@ C  NRECL=1 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN S.P. WORDS
+ C  NRECL=4 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN BYTES
+ C  (for a VAX, it is probably 1)
+ C
+-      NRECL= 
++      NRECL=4
+ 
+ C  *****************************************************************
+ 
+@@ -313,7 +313,7 @@ C  NRECL=1 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN S.P. WORDS
+ C  NRECL=4 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN BYTES
+ C  (for UNIX, it is probably 4)
+ C
+-      NRECL=
++      NRECL=4
+ 
+ C  NRFILE IS THE INTERNAL UNIT NUMBER USED FOR THE EPHEMERIS FILE
+ 
+@@ -385,7 +385,7 @@ C  *****************************************************************
+ C  NRECL=1 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN S.P. WORDS
+ C  NRECL=4 IF "RECL" IN THE OPEN STATEMENT IS THE RECORD LENGTH IN BYTES
+ 
+-       NRECL=
++       NRECL=4
+ 
+ C  *****************************************************************
+ 
+@@ -414,7 +414,7 @@ C  For  de423, set KSIZE to 2036
+ C  For  de424, set KSIZE to 2036
+ C  For  de430, set KSIZE to 2036
+ 
+-      KSIZE = 
++      KSIZE = 2036
+ 
+ C  *******************************************************************
+ 
+@@ -937,7 +937,7 @@ C THE USER MUST SELECT ONE OF THE FOLLOWING BY DELETING THE 'C' IN COLUMN 1
+ C ************************************************************************
+ 
+ C        CALL FSIZER1(NRECL,KSIZE,NRFILE,NAMFIL)
+-C        CALL FSIZER2(NRECL,KSIZE,NRFILE,NAMFIL)
++        CALL FSIZER2(NRECL,KSIZE,NRFILE,NAMFIL)
+ C        CALL FSIZER3(NRECL,KSIZE,NRFILE,NAMFIL)
+ 
+       IF(NRECL .EQ. 0) WRITE(*,*)'  ***** FSIZER IS NOT WORKING *****'
