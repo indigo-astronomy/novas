@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
     if (argc < 2)
     {
-        fprintf(stderr, "Usage: %s EPH-file", argv[0]);
+        fprintf(stderr, "Usage: %s EPH-file\n", argv[0]);
         exit (1);
     }
    
@@ -198,14 +198,14 @@ int main(int argc, char *argv[])
 
    if ((error = app_planet (jd_tt,&moon,accuracy, &ra,&dec,&dis)) != 0)
    {
-      printf ("Error %d from app_planet.", error);
+      printf ("Error %d from app_planet.\n", error);
       return (error);
    }
 
    if ((error = topo_planet (jd_tt,&moon,delta_t,&geo_loc,accuracy,
       &rat,&dect,&dist)) != 0)
    {
-      printf ("Error %d from topo_planet.", error);
+      printf ("Error %d from topo_planet.\n", error);
       return (error);
    }
 
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
    if ((error = place (jd_tt,&moon,&obs_loc,delta_t,1,accuracy, 
       &t_place)) != 0)
    {
-      printf ("Error %d from place.", error);
+      printf ("Error %d from place.\n", error);
       return (error);
    }
    
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
 
    if ((error = sidereal_time (jd_ut1,0.0,delta_t,1,1,accuracy, &gast)) != 0)
    {
-      printf ("Error %d from sidereal_time.", error);
+      printf ("Error %d from sidereal_time.\n", error);
       return (error);
    }
    
@@ -273,19 +273,19 @@ int main(int argc, char *argv[])
    jd[1] = 0.0;
    if ((error = ephemeris (jd,&mars,1,accuracy, pos,vel)) != 0)
    {
-      printf ("Error %d from ephemeris (Mars).", error);
+      printf ("Error %d from ephemeris (Mars).\n", error);
       return (error);
    }
 
    if ((error = equ2ecl_vec (T0,2,accuracy,pos, pose)) != 0)  
    {
-      printf ("Error %d from equ2ecl_vec.", error);
+      printf ("Error %d from equ2ecl_vec.\n", error);
       return (error);
    }
 
    if ((error = vector2radec (pose, &elon,&elat)) != 0)
    {
-      printf ("Error %d from vector2radec.", error);
+      printf ("Error %d from vector2radec.\n", error);
       return (error);
    }
    elon *= 15.0;
@@ -323,13 +323,13 @@ int main(int argc, char *argv[])
    if ((error = ter2cel (jd_ut1,0.0,delta_t,1,accuracy,0,x_pole,y_pole,vter,
       vcel)) != 0)
    {
-      printf ("Error %d from ter2cel.", error);
+      printf ("Error %d from ter2cel.\n", error);
       return (error);
    }
    
    if ((error = vector2radec (vcel, &ra,&dec)) != 0)
    {
-      printf ("Error %d from vector2radec.", error);
+      printf ("Error %d from vector2radec.\n", error);
       return (error);
    }
 
