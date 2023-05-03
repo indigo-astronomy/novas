@@ -1,0 +1,13 @@
+diff --git a/fortran/asc2eph.f b/fortran/asc2eph.f
+index 94ec070..50e402d 100644
+--- a/fortran/asc2eph.f
++++ b/fortran/asc2eph.f
+@@ -71,7 +71,7 @@ C ******************************************************************************
+ C *****  The user must choose one of the following statements  *****
+ C            ( Usually NRECL = 4 is used on Unix platforms)
+ 
+-C      PARAMETER ( NRECL = 4 )
++      PARAMETER ( NRECL = 4 )
+ C      PARAMETER ( NRECL = 1 )
+ 
+       INTEGER OLDMAX

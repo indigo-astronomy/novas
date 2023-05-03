@@ -1,0 +1,301 @@
+INSTRUCTIONS FOR EPHEMERIS FILE ACCESS THROUGH FORTRAN PROGRAMS  - [24 March 2013]
+----------------------------------------------------------------------------------
+
+These instructions provide a guide to Fortran programs for converting, merging, 
+and reading JPL planetary ephemeris files.  The steps assume downloading of 
+ASCII ephemeris files, conversion of ASCII files to binary files, and reading the 
+binary files with a test program .
+
+Program "testeph" includes a simple calling program which reads and interpolates 
+planetary and lunar coordinates from a binary ephemeris file and compares 
+results at specific times against corresponding numbers produced at JPL and 
+stored in a file along with the ASCII ephemeris files. Most users will insert 
+the ephemeris reading subroutines from "testeph" into their own programs.
+
+The subroutines in "testeph" which read the ephemeris files interpolate the
+Chebyshev coefficients for the positions of the planets, Sun, and Moon, which 
+are stored in units of kilometers, and scales them by the value of the 
+astronomical unit (AU) stored on the ephemeris to return positions in units of AU. 
+Users who prefer to units of km will want to use the provided subroutine "CONST"
+ to read the value of the AU and scale the positions into kilometers.
+
+These instructions assume the user will start with the ASCII format files. Some
+users will be able to skip the step of converting ASCII files to binary files if 
+they can find binary files compatible with their system.
+
+
+FILES TO BE RETRIEVED BY THE USER
+------------------------------------
+
+(via anonymous ftp from ftp://ssd.jpl.nasa.gov)
+
+/pub/eph/planets/fortran/asc2eph.f
+/pub/eph/planets/fortran/testeph.f
+
+/pub/eph/planets/ascii/deXXX/ascSYYYY.XXX
+/pub/eph/planets/ascii/deXXX/testpo.XXX
+/pub/eph/planets/ascii/deXXX/header.XXX
+
+where "XXX" is a three-digit number of the desired planetary ephemeris 
+(e.g. 403), and "SYYYY" is the starting year of each particular ASCII file 
+("S" is the sign : "p" for + and "m" for -).
+
+The ASCII files come in blocks of 20 years or more. The ASCII files are 
+converted into binary files on the user's computer, using program "asc2eph".
+
+******************************************************************************
+
+BRIEF ITEM DESCRIPTION
+-----------------------
+
+asc2eph.f      : Program which converts the ASCII ephemeris file into binary
+                 format. 
+
+testeph.f      : Fortran program containing a main program which uses the 
+                 reading and interpolating subroutines.  This program 
+                 compares the results with similar runs made at JPL in order 
+                 to ensure that the ephemeris is installed and being read 
+                 correctly.
+
+ascSYYYY.XXX   : ASCII ephemeris files from JPL Ephemeris DEXXX,
+                 starting in the year SYYYY ("p/m" for  "+/-").  
+                 The ASCII ephemeris files may be converted separately 
+                 into binary ephemeris files using program "asc2eph" 
+                 or several ASCII ephemeris files can be input at one time 
+                 into "asc2eph" to make a longer binary file.
+
+header.XXX : Header information for ephemeris deXXX, needed by "asc2eph".
+
+testpo.XXX"    : Test results computed at JPL; these are input by the program
+                 testeph and are used for testing the ephemeris 
+                 installation.  There is a different test file for each 
+                 ephemeris; they must match or the test will not 
+                 work correctly.
+
+******************************************************************************
+
+ASCII to BINARY CONVERSION
+--------------------------
+
+To convert the ASCII blocks into a binary ephemeris, you must first 
+compile and run the program "asc2eph".  Before compiling "asc2eph.f" the user
+must edit the program to select length of a Fortran direct access record on the users
+platform by uncommentting one of the lines which specify the parameter 'NRECL'.
+The program "asc2eph" reads, via standard input, a header file followed by 
+one or more of the ASCII ephemeris blocks. 
+Thus, the input is "header.XXX" and (a series of) "ascSYYYY.XXX".  (The "S" 
+stands for the "sign": "p" for "+";"m" for "-".)  The blocks must be in order 
+with no gaps in the intervals of time-coverage.  The binary ephemeris is written
+onto a file called 'JPLEPH'.
+
+An example for running asc2eph on a PC is the following:
+
+    C:\> copy header.200+ascp1980.200+ascp2000.200+ascp2020.200  infile.200
+    C:\> asc2eph < infile.200
+
+In UNIX, one would use:
+
+    cat header.200 ascp1980.200 ascp2000.200 ascp2020.200 | asc2eph.e
+
+
+TESTING THE BINARY FILE
+-----------------------
+
+To check that the conversion from ASCII to binary ephemeris file has been done 
+successfully, the program, "testeph" is provided.  This program reads 
+ephemeris positions and compares the results with values computed at JPL, 
+contained in the file "testpo.XXX".
+
+Compilation of the program "testeph" requires tailoring of source code to work 
+on the users computer, since the program uses a native binary Fortran read 
+function that is implemented differently on different platforms. Instructions on 
+the required tailoring are given below.
+
+After compilation, running program "testeph" requires assigning the name 
+"JPLEPH" to the binary ephemeris file and sending "testpo.XXX" to 
+the executable via standard input. An example under the UNIX command line is after 
+creating the binary JPLEPH file from the DE200 ASCCI filers as described above is:
+
+    cat testpo.200 | testeph.e
+
+The program "testeph" will print out the list of ephemeris constants
+(retrieved by the subroutine "CONST") and will then use the subroutine
+"PLEPH" to read and interpolate the ephemeris for coordinates
+corresponding to the sample ones in "testpo.xxx".  If any comparison
+yields a difference larger than 10**(-13) [in units of au or au/day],
+an error message will be printed out.  Further, a line will be printed
+every 100 comparisons in any case, so that the progress can be monitored.
+
+
+TAILORING THE SOFTWARE
+----------------------
+
+The software was written in standard Fortran-77.  It should work on 
+any machine with a standard compiler.  
+
+HOWEVER, there are two parameters, NRECL, and KSIZE which must be defined
+by the user by editing the program before compilation.
+
+These parameters are set by the subroutine FSIZER1, FSIZER2, or FSIZER3.
+The user must determine which of these three subroutines is appropriate,
+select which is used by uncomenting the relevant line in the subroutine "STATE",
+comment lines needing values in the two non-used versions, and adding the correct
+values in the version selected.
+
+Records are stored on some platforms in single precison words (in which case NRECL = 1)
+or in bytes (in which case NRECL = 4). The user must select the correct value when
+editing the selected version of FSIZER.
+
+Each record of the binary ephemeris file has a length of KSIZE single precision words.
+KSIZE is not the same for each ephemeris. The three different versions of FSIZER
+determine KSIZE in different ways.
+
+FSIZER1     Uses the INQUIRE statement to find the length of the records
+            automatically before opening the file.  This works for VAX's;
+            not in UNIX.
+
+FSIZER2     Opens the file with a large arbitrary value of RECL, reads the first
+            record, and use the information on that record to determine the 
+            recordn length.  FSIZER2 then closes the file and passes the correct
+            value of KSIZE to the subroutinte STATE to re-open with the 
+            exact value. This seems to work for UNIX compilers as long as the 
+            initial value of RECL is less than the exact value but large enough 
+            to get the required information from the first file.
+            (For other compilers, this doesn't work since you can open a file 
+            only with the exact value of RECL.)
+
+FSIZER3     The user enters a fixed value for KSIZE based on the ephemeris file ins use.
+            KSIZE is 1652 for DE200, 2036 for DE4xx except DE406 for which KSIZE = 1456..
+
+The selected version of FSIZER also defines the file name Fortran unit number
+the binary ephemeris, which iare 12 and 'JPLEPH' respectively by default but can 
+be changed by the user if desired.
+
+MAIN READING SUBROUTINES
+------------------------
+
+Two of the subroutines called by "testeph.f" are of primary interest to the user:
+"PLEPH" and "CONST". Subroutines "DPLEPH", and "STATE" may also be useful.
+
+   PLEPH  :  Get the state vector (position and velocity) of one body with 
+              respect to another at any given time within the interval covered 
+              by the ephemeris.
+
+   CONST  :  Retrieve values of all of the constants on the ephemeris file.
+
+   DPLEPH :  Same as PLEPH, but with increased precision in the input time.
+
+   STATE  :  Read and interpolate the ephemeris file. (Called by PLEPH).
+
+
+C  NOTE : Over the years, different versions of PLEPH have had a 5th argument:
+C  sometimes, an error return statement number; sometimes, a logical denoting
+C  whether or not the requested date is covered by the ephemeris.  We apologize
+C  for this inconsistency; in this version, we use only the four necessary
+C  arguments and do the testing outside of the subroutine.
+
+
+**  PLEPH  ********  subroutine pleph( tdb, npl, nctr, pv)  **********
+
+    Input
+    -----
+          tdb [d.p.]  : julian ephemeris date
+          npl [int.]  : planet number
+          nctr [int.] : center number
+
+             identifications for "npl" and "nctr"
+             ------------------------------------
+              1 = mercury           8 = neptune
+              2 = venus             9 = pluto
+              3 = earth            10 = moon
+              4 = mars             11 = sun
+              5 = jupiter          12 = solar-system barycenter
+              6 = saturn           13 = earth-moon barycenter
+              7 = uranus           14 = nutations in longitude and obliquity
+                                   15 = librations (if they exist on the file)
+                 (for nutations and librations, nctr=0)
+    Output
+    ------
+          pv(6) [d.p.]  : x,y,z,x-dot,y-dot,z-dot [au, au/day]
+                  for nutations, d(psi), d(eps), d(psi)-dot, d(eps)-dot
+                                  [rads, rads/day]
+                  for librations, (Euler angles and rates, w.r.t. the ephemeris
+                                  reference frame)   [rads, rads/day]
+
+**  CONST  ********  subroutine const(nmv,vlv,sss,nrv)  **********
+
+    Input   (none)
+    -----
+
+    Output
+    ------
+     nmv(nrv) [char*6] : list of nrv names associated with the values in vlv
+     vlv(nrv) [d.p.]   : nrv values associated with the names in nmcc
+     sss(3) [d.p.]     :
+                            sss(1) : starting jed of the ephemeris file
+                            sss(2) : ending jed of the ephemeris file
+                            sss(3) : number of days covered by each block
+                                     of Chebychev coefficients
+     nrv [int.]        : number of values in nmv and vlv
+
+
+
+**  STATE  ********  subroutine state(jed,list,pv,nut,*)  **********
+           
+  [This subroutine is identical to that provided in the past; it is still 
+   provided to give previous users compatability; it is not recommended for 
+   use by first-time users.]
+                                                                     
+**  DPLEPH  ********  entry dpleph( tdb2, npl, nctr, pv)  **********
+
+  This entry is identical to "PLEPH", except that the input time, tdb2, is
+
+  doubly-dimensioned for increased precision  [ double precision tdb2(2) ].
+
+                          Any combination of tdb2(1)+tdb2(2) which falls within
+                          the time span on the file is a permissible epoch.    
+
+                                                                               
+                          For ease in programming, the user may put the entire 
+                          date into tdb2(1) and set tdb2(2)=0.        
+
+                          However, for maximum interpolation accuracy, set 
+                          tdb2(1) equal to the most recent midnight at or 
+                          before interpolation epoch (i.e., xxxxxxx.5d0) and 
+                          set tdb2(2) equal to the remaining fractional part 
+
+                          of the day.
+
+                          As an alternative, it may prove convenient to set 
+                          tdb2(1) equal to some fixed epoch, such as start of 
+                          integration, and set tdb2(2) equal to the remainder 
+                          of the desired epoch.
+
+******************************************************************************
+
+CONSTANTS ON THE EPHEMERIS FILE
+-------------------------------
+
+The following is a partial list of constants found on the ephemeris file:
+
+  DENUM           Planetary ephemeris number.
+  LENUM           Lunar ephemeris number.
+  TDATEF, TDATEB  Dates of the Forward and Backward Integrations
+  CLIGHT          Speed of light (km/s).
+  AU              Number of kilometers per astronomical unit.
+  EMRAT           Earth-Moon mass ratio.
+  GMi             GM for ith planet [au**3/day**2].
+  GMB             GM for the Earth-Moon Barycenter [au**3/day**2].
+  GMS             Sun (= k**2) [au**3/day**2].
+  X1, ..., ZD9    Initial conditions for the numerical integration,
+                  given at "JDEPOC", with respect to "CENTER".
+  JDEPOC          Epoch (JED) of initial conditions, normally JED 2440400.5.
+  CENTER          Reference center for the initial conditions.
+                  (Sun: 11,  Solar System Barycenter: 12)
+  MAiiii          GM's of asteroid number iiii [au**3/day**2].
+  PHI, THT, PSI   Euler angles of the orientation of the lunar mantle.
+  OMEGAX, ...     Rotational velocities of the lunar mantle.
+  PHIC,THTC,PSIC  Euler angles of the orientation of the lunar core.
+  OMGCX, ...      Rotational velocities of the lunar core.
+
+
